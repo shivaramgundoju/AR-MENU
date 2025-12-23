@@ -170,9 +170,11 @@ const ARViewPage = () => {
               alt={dish.name}
               ar
               ar-modes="webxr scene-viewer quick-look"
-              ar-scale="fixed"
+              ar-scale="auto"
+              ar-placement="floor"
+              ios-src={dish.modelUrl}
               camera-controls
-              touch-action="none"
+              disable-tap
               auto-rotate
               auto-rotate-delay="0"
               rotation-per-second="30deg"
