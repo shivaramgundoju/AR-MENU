@@ -170,10 +170,9 @@ const ARViewPage = () => {
               alt={dish.name}
               ar
               ar-modes="webxr scene-viewer quick-look"
-              ar-scale="auto"
+              ar-scale="fixed"
               camera-controls
-              touch-action="pan-y"
-              disable-pan
+              touch-action="none"
               auto-rotate
               auto-rotate-delay="0"
               rotation-per-second="30deg"
@@ -190,8 +189,7 @@ const ARViewPage = () => {
               style={{
                 width: '100%',
                 height: 'clamp(300px, 50vh, 500px)',
-                backgroundColor: 'transparent',
-                touchAction: 'pan-y'
+                backgroundColor: 'transparent'
               }}
             >
               {/* Loading indicator */}
