@@ -21,7 +21,7 @@ const MenuPage = () => {
       try {
         setLoading(true);
 
-        const response = await fetch("http://localhost:5000/api/dishes");
+        const response = await fetch("https://ar-menu-1.onrender.com/api/dishes");
 
         if (!response.ok) {
           throw new Error("Failed to fetch dishes");

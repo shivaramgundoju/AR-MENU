@@ -20,7 +20,7 @@ const ARViewPage = () => {
     const fetchDish = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:5000/api/dishes/${dishId}`);
+        const response = await fetch(`https://ar-menu-1.onrender.com/api/dishes/${dishId}`);
         
         if (!response.ok) {
           throw new Error('Dish not found');
