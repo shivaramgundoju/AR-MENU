@@ -105,39 +105,39 @@ const MenuPage = () => {
      MAIN UI
      ============================= */
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-8 sm:mb-12 animate-fade-in-down">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
             Our Menu
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-base sm:text-lg text-gray-600 px-4">
             Explore our delicious dishes and view them in AR
           </p>
         </div>
 
         {/* Search */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8 animate-fade-in animation-delay-200">
           <div className="relative max-w-2xl mx-auto">
             <input
               type="text"
               placeholder="Search for dishes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-6 py-4 pl-12 text-lg border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-500 shadow-md"
+              className="w-full px-4 sm:px-6 py-3 sm:py-4 pl-10 sm:pl-12 text-base sm:text-lg border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-500 shadow-md transition-all duration-300"
             />
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
           </div>
         </div>
 
         {/* Categories */}
-        <div className="mb-12 flex flex-wrap justify-center gap-3">
+        <div className="mb-8 sm:mb-12 flex flex-wrap justify-center gap-2 sm:gap-3 animate-fade-in animation-delay-400">
           {categories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-3 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all ${
+              className={`px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-lg font-semibold shadow-md hover:shadow-lg transition-all ${
                 selectedCategory === category
                   ? "hero-gradient text-white border-0"
                   : "bg-white text-gray-700 border-2 border-gray-200 hover:border-primary"
@@ -155,46 +155,48 @@ const MenuPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredDishes.map((dish) => (
+            {filteredDishes.map((dish, index) => (
               <div
                 key={dish._id}
-                className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
+                className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:scale-105 animate-fade-in-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {/* Image with Category Badge */}
-                <div className="relative h-56 bg-gray-200">
+                <div className="relative h-56 bg-gray-200 overflow-hidden group">
                   <img
                     src={dish.imageUrl}
                     alt={dish.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
                   />
-                  <span className="absolute top-4 right-4 bg-amber-500 text-white text-xs font-semibold px-4 py-1.5 rounded-full shadow-lg">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <span className="absolute top-4 right-4 bg-amber-500 text-white text-xs font-semibold px-4 py-1.5 rounded-full shadow-lg transition-transform duration-300 group-hover:scale-110">
                     {dish.category}
                   </span>
                 </div>
 
                 {/* Content */}
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   {/* Dish Name */}
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
                     {dish.name}
                   </h3>
                   
                   {/* Description */}
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4 min-h-[40px]">
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 min-h-[40px]">
                     {dish.description}
                   </p>
 
                   {/* Price */}
-                  <div className="text-3xl font-bold text-amber-600 mb-4">
+                  <div className="text-2xl sm:text-3xl font-bold text-amber-600 mb-3 sm:mb-4">
                     ₹{dish.price.toFixed(2)}
                   </div>
 
                   {/* View in AR Button */}
                   <button
                     onClick={() => handleViewInAR(dish._id)}
-                    className="w-full hero-gradient text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl border-0 group"
+                    className="w-full hero-gradient text-white font-semibold py-3 sm:py-3.5 px-4 sm:px-6 text-sm sm:text-base rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl border-0 group"
                   >
-                    <Box className="w-5 h-5" />
+                    <Box className="w-4 h-4 sm:w-5 sm:h-5" />
                     View in AR
                   </button>
                 </div>

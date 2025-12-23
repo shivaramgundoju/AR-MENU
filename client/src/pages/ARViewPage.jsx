@@ -16,6 +16,11 @@ const ARViewPage = () => {
     quantity: 1
   });
 
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   useEffect(() => {
     const fetchDish = async () => {
       try {
@@ -51,17 +56,27 @@ const ARViewPage = () => {
       return;
     }
 
-    const modelViewer = document.querySelector('model-viewer');
-    if (modelViewer) {
-      // Use model-viewer's built-in AR activation which handles both iOS and Android
-      modelViewer.activateAR();
+    const modelUrl = dish.modelUrl;
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+
+    if (isIOS) {
+      // iOS AR Quick Look
+      const link = document.createElement('a');
+      link.rel = 'ar';
+      link.href = modelUrl;
+      link.click();
+    } else if (isAndroid) {
+      // Android Scene Viewer
+      const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(modelUrl)}&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end;`;
+      window.location.href = intentUrl;
     }
   };
 
   // Handle Web AR
   const handleWebAR = () => {
     const modelViewer = document.querySelector('model-viewer');
-    if (modelViewer) {
+    if (modelViewer && modelViewer.canActivateAR) {
       modelViewer.activateAR();
     }
   };
@@ -131,16 +146,19 @@ const ARViewPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* 3D Model Viewer */}
-          <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 md:p-8 shadow-lg border border-gray-100">
+          <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 sm:p-8 shadow-lg border border-gray-100">
             <model-viewer
               src={dish.modelUrl}
               alt={dish.name}
               ar
               ar-modes="webxr scene-viewer quick-look"
+              ar-scale="auto"
               camera-controls
+              touch-action="pan-y"
+              disable-pan
               auto-rotate
               auto-rotate-delay="0"
               rotation-per-second="30deg"
@@ -151,12 +169,14 @@ const ARViewPage = () => {
               min-camera-orbit="auto auto 50%"
               max-camera-orbit="auto auto 200%"
               field-of-view="30deg"
-              ios-src={dish.modelUrl}
+              interaction-prompt="auto"
+              interaction-prompt-threshold="0"
+              className="w-full"
               style={{
                 width: '100%',
-                height: '400px',
-                minHeight: '300px',
-                backgroundColor: 'transparent'
+                height: 'clamp(300px, 50vh, 500px)',
+                backgroundColor: 'transparent',
+                touchAction: 'pan-y'
               }}
             >
               {/* Loading indicator */}
@@ -164,18 +184,23 @@ const ARViewPage = () => {
                 <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary"></div>
               </div>
               
-              {/* Custom AR button slot - keep hidden, we'll use our own buttons */}
-              <button slot="ar-button" style={{ display: 'none' }}></button>
+              {/* AR Prompt */}
+              <div
+                slot="ar-button"
+                className="hidden"
+              ></div>
             </model-viewer>
 
             {/* AR Buttons */}
-            <div className="mt-4 md:mt-6 space-y-3">
+            <div className="mt-6 space-y-3">
+
+              
               <button
                 onClick={handleMobileAR}
-                className="w-full hero-gradient text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl border-0 active:scale-95"
+                className="w-full hero-gradient text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl border-0"
               >
                 <Smartphone className="w-5 h-5" />
-                <span>View in AR</span>
+                View in AR (Mobile App)
               </button>
             </div>
 
@@ -187,48 +212,21 @@ const ARViewPage = () => {
             )}
 
             {/* AR Instructions */}
-            <div className="mt-4 md:mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-900 font-bold mb-3 flex items-center gap-2">
-                <span className="text-lg">📱</span> How to Use AR:
-              </p>
-              <div className="space-y-2.5">
-                <div className="flex items-start gap-2">
-                  <span className="text-blue-600 font-bold mt-0.5">1.</span>
-                  <p className="text-xs md:text-sm text-blue-900 leading-relaxed">
-                    <strong>Preview Mode:</strong> Use your fingers to rotate and zoom the 3D model above
-                  </p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-blue-600 font-bold mt-0.5">2.</span>
-                  <p className="text-xs md:text-sm text-blue-900 leading-relaxed">
-                    <strong>AR Mode:</strong> Tap the "View in AR" button to launch augmented reality
-                  </p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-blue-600 font-bold mt-0.5">3.</span>
-                  <p className="text-xs md:text-sm text-blue-900 leading-relaxed">
-                    <strong>Place Model:</strong> Point your camera at a flat surface (table, floor)
-                  </p>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="text-blue-600 font-bold mt-0.5">4.</span>
-                  <p className="text-xs md:text-sm text-blue-900 leading-relaxed">
-                    <strong>View in Real Size:</strong> The dish will appear at its actual size in your space
-                  </p>
-                </div>
-              </div>
-              <div className="mt-3 pt-3 border-t border-blue-200">
-                <p className="text-xs text-blue-800 italic">
-                  💡 Tip: For best results, ensure good lighting and a clear, flat surface
-                </p>
-              </div>
+            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-900 font-semibold mb-2">AR Instructions:</p>
+              <ul className="text-xs text-blue-800 space-y-1">
+                <li>• Use your fingers to rotate and zoom the model</li>
+                <li>• Tap "View in AR" to place it in your space</li>
+                <li>• Move your device to find a flat surface</li>
+                <li>• The model will appear at real-world scale</li>
+              </ul>
             </div>
           </div>
 
           {/* Dish Details */}
-          <div className="space-y-4 md:space-y-6">
+          <div className="space-y-6">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{dish.name}</h1>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">{dish.name}</h1>
               <span className="inline-block bg-amber-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full">
                 {dish.category}
               </span>
