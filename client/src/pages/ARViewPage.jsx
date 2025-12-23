@@ -187,14 +187,41 @@ const ARViewPage = () => {
             )}
 
             {/* AR Instructions */}
-            <div className="mt-4 md:mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-900 font-semibold mb-2">AR Instructions:</p>
-              <ul className="text-xs text-blue-800 space-y-1">
-                <li>• Use your fingers to rotate and zoom the model</li>
-                <li>• Tap "View in AR" to place it in your space</li>
-                <li>• Move your device to find a flat surface</li>
-                <li>• The model will appear at real-world scale</li>
-              </ul>
+            <div className="mt-4 md:mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-900 font-bold mb-3 flex items-center gap-2">
+                <span className="text-lg">📱</span> How to Use AR:
+              </p>
+              <div className="space-y-2.5">
+                <div className="flex items-start gap-2">
+                  <span className="text-blue-600 font-bold mt-0.5">1.</span>
+                  <p className="text-xs md:text-sm text-blue-900 leading-relaxed">
+                    <strong>Preview Mode:</strong> Use your fingers to rotate and zoom the 3D model above
+                  </p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-blue-600 font-bold mt-0.5">2.</span>
+                  <p className="text-xs md:text-sm text-blue-900 leading-relaxed">
+                    <strong>AR Mode:</strong> Tap the "View in AR" button to launch augmented reality
+                  </p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-blue-600 font-bold mt-0.5">3.</span>
+                  <p className="text-xs md:text-sm text-blue-900 leading-relaxed">
+                    <strong>Place Model:</strong> Point your camera at a flat surface (table, floor)
+                  </p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-blue-600 font-bold mt-0.5">4.</span>
+                  <p className="text-xs md:text-sm text-blue-900 leading-relaxed">
+                    <strong>View in Real Size:</strong> The dish will appear at its actual size in your space
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-blue-200">
+                <p className="text-xs text-blue-800 italic">
+                  💡 Tip: For best results, ensure good lighting and a clear, flat surface
+                </p>
+              </div>
             </div>
           </div>
 
