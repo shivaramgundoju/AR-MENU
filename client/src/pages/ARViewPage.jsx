@@ -51,27 +51,17 @@ const ARViewPage = () => {
       return;
     }
 
-    const modelUrl = dish.modelUrl;
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isAndroid = /Android/i.test(navigator.userAgent);
-
-    if (isIOS) {
-      // iOS AR Quick Look
-      const link = document.createElement('a');
-      link.rel = 'ar';
-      link.href = modelUrl;
-      link.click();
-    } else if (isAndroid) {
-      // Android Scene Viewer
-      const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(modelUrl)}&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end;`;
-      window.location.href = intentUrl;
+    const modelViewer = document.querySelector('model-viewer');
+    if (modelViewer) {
+      // Use model-viewer's built-in AR activation which handles both iOS and Android
+      modelViewer.activateAR();
     }
   };
 
   // Handle Web AR
   const handleWebAR = () => {
     const modelViewer = document.querySelector('model-viewer');
-    if (modelViewer && modelViewer.canActivateAR) {
+    if (modelViewer) {
       modelViewer.activateAR();
     }
   };
@@ -141,10 +131,10 @@ const ARViewPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {/* 3D Model Viewer */}
-          <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 shadow-lg border border-gray-100">
+          <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 md:p-8 shadow-lg border border-gray-100">
             <model-viewer
               src={dish.modelUrl}
               alt={dish.name}
@@ -161,9 +151,11 @@ const ARViewPage = () => {
               min-camera-orbit="auto auto 50%"
               max-camera-orbit="auto auto 200%"
               field-of-view="30deg"
+              ios-src={dish.modelUrl}
               style={{
                 width: '100%',
-                height: '500px',
+                height: '400px',
+                minHeight: '300px',
                 backgroundColor: 'transparent'
               }}
             >
@@ -172,23 +164,18 @@ const ARViewPage = () => {
                 <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary"></div>
               </div>
               
-              {/* AR Prompt */}
-              <div
-                slot="ar-button"
-                className="hidden"
-              ></div>
+              {/* Custom AR button slot - keep hidden, we'll use our own buttons */}
+              <button slot="ar-button" style={{ display: 'none' }}></button>
             </model-viewer>
 
             {/* AR Buttons */}
-            <div className="mt-6 space-y-3">
-
-              
+            <div className="mt-4 md:mt-6 space-y-3">
               <button
                 onClick={handleMobileAR}
-                className="w-full hero-gradient text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl border-0"
+                className="w-full hero-gradient text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl border-0 active:scale-95"
               >
                 <Smartphone className="w-5 h-5" />
-                View in AR (Mobile App)
+                <span>View in AR</span>
               </button>
             </div>
 
@@ -200,7 +187,7 @@ const ARViewPage = () => {
             )}
 
             {/* AR Instructions */}
-            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="mt-4 md:mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
               <p className="text-sm text-blue-900 font-semibold mb-2">AR Instructions:</p>
               <ul className="text-xs text-blue-800 space-y-1">
                 <li>• Use your fingers to rotate and zoom the model</li>
@@ -212,9 +199,9 @@ const ARViewPage = () => {
           </div>
 
           {/* Dish Details */}
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <div>
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">{dish.name}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{dish.name}</h1>
               <span className="inline-block bg-amber-500 text-white text-sm font-semibold px-4 py-1.5 rounded-full">
                 {dish.category}
               </span>
