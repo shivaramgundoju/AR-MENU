@@ -56,20 +56,35 @@ const ARViewPage = () => {
       return;
     }
 
-    const modelUrl = dish.modelUrl;
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isAndroid = /Android/i.test(navigator.userAgent);
-
-    if (isIOS) {
-      // iOS AR Quick Look
-      const link = document.createElement('a');
-      link.rel = 'ar';
-      link.href = modelUrl;
-      link.click();
-    } else if (isAndroid) {
-      // Android Scene Viewer
-      const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(modelUrl)}&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end;`;
-      window.location.href = intentUrl;
+    const modelViewer = document.querySelector('model-viewer');
+    if (modelViewer) {
+      // Use model-viewer's built-in AR activation which handles both iOS and Android
+      if (modelViewer.canActivateAR) {
+        modelViewer.activateAR();
+      } else {
+        // Fallback: Try to trigger AR manually
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        
+        if (isIOS) {
+          // iOS AR Quick Look - need absolute URL
+          const baseUrl = window.location.origin;
+          const modelUrl = dish.modelUrl.startsWith('http') ? dish.modelUrl : `${baseUrl}${dish.modelUrl}`;
+          const link = document.createElement('a');
+          link.rel = 'ar';
+          link.href = modelUrl;
+          link.appendChild(document.createElement('img'));
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else if (isAndroid) {
+          // Android Scene Viewer - need absolute URL
+          const baseUrl = window.location.origin;
+          const modelUrl = dish.modelUrl.startsWith('http') ? dish.modelUrl : `${baseUrl}${dish.modelUrl}`;
+          const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(modelUrl)}&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end;`;
+          window.location.href = intentUrl;
+        }
+      }
     }
   };
 
