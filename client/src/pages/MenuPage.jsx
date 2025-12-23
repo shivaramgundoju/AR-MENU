@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { Box, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const MenuPage = () => {
+  const navigate = useNavigate();
   const [dishes, setDishes] = useState([]);
   const [filteredDishes, setFilteredDishes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -62,8 +65,7 @@ const MenuPage = () => {
   }, [searchQuery, selectedCategory, dishes]);
 
   const handleViewInAR = (dishId) => {
-    console.log("View in AR:", dishId);
-    // Later: navigate(`/ar/${dishId}`)
+    navigate(`/ar/${dishId}`);
   };
 
   /* =============================
@@ -90,7 +92,7 @@ const MenuPage = () => {
           <p className="text-red-600 text-xl mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-amber-600 text-white rounded-full hover:bg-amber-700 transition-colors"
+            className="px-6 py-3 hero-gradient text-white rounded-lg shadow-lg hover:shadow-xl transition-all border-0"
           >
             Retry
           </button>
@@ -125,9 +127,7 @@ const MenuPage = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-6 py-4 pl-12 text-lg border-2 border-gray-200 rounded-full focus:outline-none focus:border-amber-500 shadow-md"
             />
-            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-2xl">
-              🔍
-            </span>
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           </div>
         </div>
 
@@ -137,10 +137,10 @@ const MenuPage = () => {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-3 rounded-full font-semibold ${
+              className={`px-6 py-3 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all ${
                 selectedCategory === category
-                  ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white"
-                  : "bg-white text-gray-700 border-2 border-gray-200"
+                  ? "hero-gradient text-white border-0"
+                  : "bg-white text-gray-700 border-2 border-gray-200 hover:border-primary"
               }`}
             >
               {category}
@@ -158,38 +158,45 @@ const MenuPage = () => {
             {filteredDishes.map((dish) => (
               <div
                 key={dish._id}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden"
+                className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100"
               >
-                <div className="h-48 bg-gray-200">
+                {/* Image with Category Badge */}
+                <div className="relative h-56 bg-gray-200">
                   <img
                     src={dish.imageUrl}
                     alt={dish.name}
                     className="w-full h-full object-cover"
                   />
-                </div>
-
-                <div className="p-5">
-                  <span className="text-xs bg-amber-100 text-amber-700 px-3 py-1 rounded-full">
+                  <span className="absolute top-4 right-4 bg-amber-500 text-white text-xs font-semibold px-4 py-1.5 rounded-full shadow-lg">
                     {dish.category}
                   </span>
+                </div>
 
-                  <h3 className="text-xl font-bold mt-2">{dish.name}</h3>
-                  <p className="text-gray-600 text-sm mt-1">
+                {/* Content */}
+                <div className="p-6">
+                  {/* Dish Name */}
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    {dish.name}
+                  </h3>
+                  
+                  {/* Description */}
+                  <p className="text-gray-600 text-sm leading-relaxed mb-4 min-h-[40px]">
                     {dish.description}
                   </p>
 
-                  <div className="flex justify-between items-center mt-4">
-                    <span className="text-2xl font-bold text-amber-600">
-                      ₹{dish.price}
-                    </span>
-
-                    <button
-                      onClick={() => handleViewInAR(dish._id)}
-                      className="bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-2 text-white text-sm rounded-full"
-                    >
-                      View in AR
-                    </button>
+                  {/* Price */}
+                  <div className="text-3xl font-bold text-amber-600 mb-4">
+                    ₹{dish.price.toFixed(2)}
                   </div>
+
+                  {/* View in AR Button */}
+                  <button
+                    onClick={() => handleViewInAR(dish._id)}
+                    className="w-full hero-gradient text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl border-0 group"
+                  >
+                    <Box className="w-5 h-5" />
+                    View in AR
+                  </button>
                 </div>
               </div>
             ))}

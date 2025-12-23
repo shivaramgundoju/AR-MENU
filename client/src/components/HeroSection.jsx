@@ -9,7 +9,7 @@ const HeroSection = () => {
   };
 
   const handleHowItWorks = () => {
-    navigate('/how-it-works');
+    navigate('/about');
   };
 
   return (
@@ -44,38 +44,17 @@ const HeroSection = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <button
             onClick={handleViewMenu}
-            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out"
+            className="w-full sm:w-auto px-8 py-4 hero-gradient text-white text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out border-0"
           >
             View Menu
           </button>
           
           <button
             onClick={handleHowItWorks}
-            className="w-full sm:w-auto px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out border-2 border-gray-200 hover:border-amber-500"
+            className="w-full sm:w-auto px-8 py-4 bg-white text-gray-900 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out border-2 border-gray-200 hover:border-primary"
           >
             How It Works
           </button>
-        </div>
-
-        {/* Features highlight */}
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div className="bg-white bg-opacity-60 backdrop-blur-sm rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-            <div className="text-4xl mb-3">📱</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Scan QR Code</h3>
-            <p className="text-gray-600 text-sm">Simply scan the code on your table to get started</p>
-          </div>
-          
-          <div className="bg-white bg-opacity-60 backdrop-blur-sm rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-            <div className="text-4xl mb-3">🍽️</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">View in 3D</h3>
-            <p className="text-gray-600 text-sm">See realistic 3D models of every dish</p>
-          </div>
-          
-          <div className="bg-white bg-opacity-60 backdrop-blur-sm rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-            <div className="text-4xl mb-3">✨</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Order Confidently</h3>
-            <p className="text-gray-600 text-sm">Know exactly what you're getting</p>
-          </div>
         </div>
       </div>
 

@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .hero-gradient {
+    background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  }
+  
+  .hero-gradient:hover {
+    background: linear-gradient(135deg, #d97706 0%, #c2410c 100%);
+  }
+}

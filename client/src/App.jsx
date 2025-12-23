@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import MenuPage from './pages/MenuPage';
-import HowItWorks from './components/HowItWorks';
+import ARViewPage from './pages/ARViewPage';
+import WhyChooseUs from './components/WhyChooseUs';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -15,7 +16,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/menu" element={<MenuPage />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/ar/:dishId" element={<ARViewPage />} />
+            <Route path="/about" element={<WhyChooseUs />} />
           </Routes>
         </main>
         <Footer />
