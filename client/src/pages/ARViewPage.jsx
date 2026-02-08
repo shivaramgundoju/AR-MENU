@@ -25,6 +25,33 @@ const ARViewPage = () => {
     return `${window.location.origin}${url}`;
   };
 
+  // Normalize model size so downloaded models appear at a consistent scale
+  useEffect(() => {
+    if (!dish?.modelUrl) return;
+
+    const modelViewer = modelViewerRef.current;
+    if (!modelViewer) return;
+
+    const handleLoad = () => {
+      try {
+        const dims = modelViewer.getDimensions();
+        const maxDim = Math.max(dims.x || 0, dims.y || 0, dims.z || 0) || 1;
+        // Target max dimension in meters (e.g., ~30cm plate size)
+        const targetSize = 0.3;
+        const uniformScale = targetSize / maxDim;
+
+        modelViewer.setAttribute('scale', `${uniformScale} ${uniformScale} ${uniformScale}`);
+      } catch (e) {
+        // If dimensions are unavailable, leave the model at its original scale
+      }
+    };
+
+    modelViewer.addEventListener('load', handleLoad);
+    return () => {
+      modelViewer.removeEventListener('load', handleLoad);
+    };
+  }, [dish?.modelUrl]);
+
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -116,11 +143,16 @@ const ARViewPage = () => {
     }
   };
 
-  // Handle Web AR
+  // Handle Web AR (WebXR via model-viewer)
   const handleWebAR = () => {
     const modelViewer = modelViewerRef.current;
-    if (modelViewer && modelViewer.canActivateAR) {
+    if (!modelViewer) return;
+
+    if (modelViewer.canActivateAR) {
       modelViewer.activateAR();
+    } else {
+      // Fallback message when WebXR AR isn't available
+      alert('Web AR is not supported on this device or browser. Try "View in AR (Mobile App)" on a compatible phone.');
     }
   };
 
@@ -209,6 +241,7 @@ const ARViewPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* 3D Model Viewer */}
           <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 sm:p-8 shadow-lg border border-gray-100">
+            {dish.modelUrl ? (
             <model-viewer
               ref={modelViewerRef}
               src={dish.modelUrl}
@@ -219,7 +252,6 @@ const ARViewPage = () => {
               ar-placement="floor"
               ios-src={dish.iosModelUrl || dish.modelUrl}
               camera-controls
-              disable-tap
               auto-rotate
               auto-rotate-delay="0"
               rotation-per-second="30deg"
@@ -250,11 +282,24 @@ const ARViewPage = () => {
                 className="hidden"
               ></div>
             </model-viewer>
+            ) : (
+              <div className="h-[300px] flex items-center justify-center text-sm text-gray-500">
+                AR model is not available for this dish.
+              </div>
+            )}
 
             {/* AR Buttons */}
             <div className="mt-6 space-y-3">
+              {/* Web AR (WebXR) */}
+              <button
+                onClick={handleWebAR}
+                className="w-full bg-white text-primary font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg border border-primary"
+              >
+                <Smartphone className="w-5 h-5" />
+                View in AR (Web)
+              </button>
 
-              
+              {/* Native Mobile AR (Scene Viewer / Quick Look) */}
               <button
                 onClick={handleMobileAR}
                 className="w-full hero-gradient text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl border-0"

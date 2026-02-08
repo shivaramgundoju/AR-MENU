@@ -80,11 +80,12 @@ const MenuPage = () => {
     }
 
     if (searchQuery.trim() !== "") {
-      result = result.filter(
-        (dish) =>
-          dish.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          dish.description.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      const query = searchQuery.toLowerCase();
+      result = result.filter((dish) => {
+        const name = (dish.name || "").toLowerCase();
+        const description = (dish.description || "").toLowerCase();
+        return name.includes(query) || description.includes(query);
+      });
     }
 
     setFilteredDishes(result);
