@@ -33,7 +33,6 @@ export const getDishById = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch dish" });
   }
 };
-
 export const incrementDishClick = async (req, res) => {
   try {
     const { id } = req.params;

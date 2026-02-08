@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Smartphone, X } from 'lucide-react';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
-
 const ARViewPage = () => {
   const { dishId } = useParams();
   const navigate = useNavigate();
@@ -44,7 +43,6 @@ const ARViewPage = () => {
 
     fetchDish();
   }, [dishId]);
-
   // Track dish view/click for recommendations
   useEffect(() => {
     if (!dishId) return;
@@ -64,7 +62,6 @@ const ARViewPage = () => {
 
     trackClick();
   }, [dishId]);
-
   // Check if device is mobile
   const isMobile = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);

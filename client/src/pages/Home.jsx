@@ -114,8 +114,6 @@ const Home = () => {
             </div>
           )}
         </div>
-      </section>
-
       <WhyChooseUs />
     </div>
   );

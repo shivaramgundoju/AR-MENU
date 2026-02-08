@@ -3,7 +3,6 @@ import { Box, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
-
 const MenuPage = () => {
   const navigate = useNavigate();
   const [dishes, setDishes] = useState([]);
@@ -58,7 +57,6 @@ const MenuPage = () => {
         } catch (e) {
           // Ignore cache write errors
         }
-
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch dishes. Please try again later.");
