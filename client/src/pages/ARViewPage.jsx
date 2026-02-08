@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Smartphone, X } from 'lucide-react';
 
@@ -6,6 +6,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 const ARViewPage = () => {
   const { dishId } = useParams();
   const navigate = useNavigate();
+  const modelViewerRef = useRef(null);
   const [dish, setDish] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,6 +17,13 @@ const ARViewPage = () => {
     tableNumber: '',
     quantity: 1
   });
+
+  // Helper to build absolute URLs for AR assets
+  const getAbsoluteUrl = (url) => {
+    if (!url) return "";
+    if (url.startsWith("http")) return url;
+    return `${window.location.origin}${url}`;
+  };
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -69,13 +77,14 @@ const ARViewPage = () => {
 
   // Handle Mobile AR (Scene Viewer for Android, AR Quick Look for iOS)
   const handleMobileAR = () => {
+    const modelViewer = modelViewerRef.current;
+
     if (!isMobile()) {
       setShowMobileWarning(true);
       setTimeout(() => setShowMobileWarning(false), 3000);
       return;
     }
 
-    const modelViewer = document.querySelector('model-viewer');
     if (modelViewer) {
       // Use model-viewer's built-in AR activation which handles both iOS and Android
       if (modelViewer.canActivateAR) {
@@ -84,23 +93,23 @@ const ARViewPage = () => {
         // Fallback: Try to trigger AR manually
         const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
         const isAndroid = /Android/i.test(navigator.userAgent);
-        
+
+        // Prefer dedicated iOS model URL when available (e.g., .usdz)
+        const rawModelUrl = isIOS && dish.iosModelUrl ? dish.iosModelUrl : dish.modelUrl;
+        const absoluteModelUrl = getAbsoluteUrl(rawModelUrl);
+
         if (isIOS) {
           // iOS AR Quick Look - need absolute URL
-          const baseUrl = window.location.origin;
-          const modelUrl = dish.modelUrl.startsWith('http') ? dish.modelUrl : `${baseUrl}${dish.modelUrl}`;
           const link = document.createElement('a');
           link.rel = 'ar';
-          link.href = modelUrl;
+          link.href = absoluteModelUrl;
           link.appendChild(document.createElement('img'));
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
         } else if (isAndroid) {
           // Android Scene Viewer - need absolute URL
-          const baseUrl = window.location.origin;
-          const modelUrl = dish.modelUrl.startsWith('http') ? dish.modelUrl : `${baseUrl}${dish.modelUrl}`;
-          const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(modelUrl)}&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end;`;
+          const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(absoluteModelUrl)}&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end;`;
           window.location.href = intentUrl;
         }
       }
@@ -109,7 +118,7 @@ const ARViewPage = () => {
 
   // Handle Web AR
   const handleWebAR = () => {
-    const modelViewer = document.querySelector('model-viewer');
+    const modelViewer = modelViewerRef.current;
     if (modelViewer && modelViewer.canActivateAR) {
       modelViewer.activateAR();
     }
@@ -201,13 +210,14 @@ const ARViewPage = () => {
           {/* 3D Model Viewer */}
           <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-4 sm:p-8 shadow-lg border border-gray-100">
             <model-viewer
+              ref={modelViewerRef}
               src={dish.modelUrl}
               alt={dish.name}
               ar
               ar-modes="webxr scene-viewer quick-look"
               ar-scale="auto"
               ar-placement="floor"
-              ios-src={dish.modelUrl}
+              ios-src={dish.iosModelUrl || dish.modelUrl}
               camera-controls
               disable-tap
               auto-rotate

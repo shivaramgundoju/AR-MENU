@@ -76,15 +76,15 @@ const Home = () => {
                   key={dish._id}
                   className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100"
                 >
-                  {dish.imageUrl && (
+                  {dish.imageUrl || dish.image ? (
                     <div className="h-44 bg-gray-200 overflow-hidden">
                       <img
-                        src={dish.imageUrl}
+                        src={dish.imageUrl || dish.image}
                         alt={dish.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
-                  )}
+                  ) : null}
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">{dish.name}</h3>
@@ -114,6 +114,8 @@ const Home = () => {
             </div>
           )}
         </div>
+      </section>
+
       <WhyChooseUs />
     </div>
   );

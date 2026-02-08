@@ -190,7 +190,7 @@ const MenuPage = () => {
                 {/* Image with Category Badge */}
                 <div className="relative h-56 bg-gray-200 overflow-hidden group">
                   <img
-                    src={dish.imageUrl}
+                    src={dish.imageUrl || dish.image}
                     alt={dish.name}
                     className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
                   />
