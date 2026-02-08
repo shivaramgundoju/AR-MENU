@@ -18,39 +18,8 @@ const ARViewPage = () => {
     quantity: 1
   });
 
-  // Helper to build absolute URLs for AR assets
-  const getAbsoluteUrl = (url) => {
-    if (!url) return "";
-    if (url.startsWith("http")) return url;
-    return `${window.location.origin}${url}`;
-  };
-
-  // Normalize model size so downloaded models appear at a consistent scale
-  useEffect(() => {
-    if (!dish?.modelUrl) return;
-
-    const modelViewer = modelViewerRef.current;
-    if (!modelViewer) return;
-
-    const handleLoad = () => {
-      try {
-        const dims = modelViewer.getDimensions();
-        const maxDim = Math.max(dims.x || 0, dims.y || 0, dims.z || 0) || 1;
-        // Target max dimension in meters (e.g., ~30cm plate size)
-        const targetSize = 0.3;
-        const uniformScale = targetSize / maxDim;
-
-        modelViewer.setAttribute('scale', `${uniformScale} ${uniformScale} ${uniformScale}`);
-      } catch (e) {
-        // If dimensions are unavailable, leave the model at its original scale
-      }
-    };
-
-    modelViewer.addEventListener('load', handleLoad);
-    return () => {
-      modelViewer.removeEventListener('load', handleLoad);
-    };
-  }, [dish?.modelUrl]);
+  // (No runtime scaling) Let model-viewer and the AR app
+  // use the model's original scale for most reliable AR behavior.
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -102,7 +71,7 @@ const ARViewPage = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   };
 
-  // Handle Mobile AR (Scene Viewer for Android, Quick Look / WebXR for iOS)
+  // Handle Mobile AR (Scene Viewer / Quick Look / WebXR via model-viewer)
   const handleMobileAR = () => {
     const modelViewer = modelViewerRef.current;
 
@@ -111,21 +80,12 @@ const ARViewPage = () => {
       setTimeout(() => setShowMobileWarning(false), 3000);
       return;
     }
-
     if (!modelViewer) return;
 
-    // Prefer model-viewer's built-in AR activation (handles WebXR, Scene Viewer, Quick Look)
+    // Use model-viewer's built-in AR activation which chooses
+    // the best mode (WebXR, Scene Viewer, or Quick Look)
     if (modelViewer.canActivateAR) {
       modelViewer.activateAR();
-      return;
-    }
-
-    // Last-resort Android fallback if built-in AR detection failed
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    if (isAndroid && dish?.modelUrl) {
-      const absoluteModelUrl = getAbsoluteUrl(dish.modelUrl);
-      const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(absoluteModelUrl)}&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end;`;
-      window.location.href = intentUrl;
     }
   };
 
@@ -236,7 +196,6 @@ const ARViewPage = () => {
               ar-modes="webxr scene-viewer quick-look"
               ar-scale="auto"
               ar-placement="floor"
-              ios-src={dish.iosModelUrl || undefined}
               camera-controls
               auto-rotate
               auto-rotate-delay="0"

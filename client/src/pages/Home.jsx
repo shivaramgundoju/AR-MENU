@@ -99,15 +99,15 @@ const Home = () => {
                         {dish.description}
                       </p>
                     )}
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-3">
                       <span className="text-xl font-bold text-amber-600">₹{dish.price?.toFixed(2)}</span>
-                      <button
-                        onClick={() => handleViewInAR(dish._id)}
-                        className="text-sm font-semibold text-primary hover:text-amber-700"
-                      >
-                        View in AR
-                      </button>
                     </div>
+                    <button
+                      onClick={() => handleViewInAR(dish._id)}
+                      className="w-full hero-gradient text-white font-semibold py-2.5 px-4 rounded-lg text-sm shadow-md hover:shadow-lg transition-all border-0"
+                    >
+                      View in AR
+                    </button>
                   </div>
                 </div>
               ))}
