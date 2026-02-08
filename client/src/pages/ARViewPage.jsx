@@ -102,7 +102,7 @@ const ARViewPage = () => {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   };
 
-  // Handle Mobile AR (Scene Viewer for Android, AR Quick Look for iOS)
+  // Handle Mobile AR (Scene Viewer for Android, Quick Look / WebXR for iOS)
   const handleMobileAR = () => {
     const modelViewer = modelViewerRef.current;
 
@@ -112,34 +112,20 @@ const ARViewPage = () => {
       return;
     }
 
-    if (modelViewer) {
-      // Use model-viewer's built-in AR activation which handles both iOS and Android
-      if (modelViewer.canActivateAR) {
-        modelViewer.activateAR();
-      } else {
-        // Fallback: Try to trigger AR manually
-        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const isAndroid = /Android/i.test(navigator.userAgent);
+    if (!modelViewer) return;
 
-        // Prefer dedicated iOS model URL when available (e.g., .usdz)
-        const rawModelUrl = isIOS && dish.iosModelUrl ? dish.iosModelUrl : dish.modelUrl;
-        const absoluteModelUrl = getAbsoluteUrl(rawModelUrl);
+    // Prefer model-viewer's built-in AR activation (handles WebXR, Scene Viewer, Quick Look)
+    if (modelViewer.canActivateAR) {
+      modelViewer.activateAR();
+      return;
+    }
 
-        if (isIOS) {
-          // iOS AR Quick Look - need absolute URL
-          const link = document.createElement('a');
-          link.rel = 'ar';
-          link.href = absoluteModelUrl;
-          link.appendChild(document.createElement('img'));
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        } else if (isAndroid) {
-          // Android Scene Viewer - need absolute URL
-          const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(absoluteModelUrl)}&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end;`;
-          window.location.href = intentUrl;
-        }
-      }
+    // Last-resort Android fallback if built-in AR detection failed
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    if (isAndroid && dish?.modelUrl) {
+      const absoluteModelUrl = getAbsoluteUrl(dish.modelUrl);
+      const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encodeURIComponent(absoluteModelUrl)}&mode=ar_preferred#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(window.location.href)};end;`;
+      window.location.href = intentUrl;
     }
   };
 
@@ -250,7 +236,7 @@ const ARViewPage = () => {
               ar-modes="webxr scene-viewer quick-look"
               ar-scale="auto"
               ar-placement="floor"
-              ios-src={dish.iosModelUrl || dish.modelUrl}
+              ios-src={dish.iosModelUrl || undefined}
               camera-controls
               auto-rotate
               auto-rotate-delay="0"
@@ -290,22 +276,13 @@ const ARViewPage = () => {
 
             {/* AR Buttons */}
             <div className="mt-6 space-y-3">
-              {/* Web AR (WebXR) */}
-              <button
-                onClick={handleWebAR}
-                className="w-full bg-white text-primary font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg border border-primary"
-              >
-                <Smartphone className="w-5 h-5" />
-                View in AR (Web)
-              </button>
-
               {/* Native Mobile AR (Scene Viewer / Quick Look) */}
               <button
                 onClick={handleMobileAR}
                 className="w-full hero-gradient text-white font-semibold py-3.5 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl border-0"
               >
                 <Smartphone className="w-5 h-5" />
-                View in AR (Mobile App)
+                View in AR
               </button>
             </div>
 
