@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import HeroSection from '../components/HeroSection';
 import WhyChooseUs from '../components/WhyChooseUs';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://ar-menu-70a5.onrender.com";
 
 const Home = () => {
   const navigate = useNavigate();

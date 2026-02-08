@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://ar-menu-70a5.onrender.com";
 const MenuPage = () => {
   const navigate = useNavigate();
   const [dishes, setDishes] = useState([]);
